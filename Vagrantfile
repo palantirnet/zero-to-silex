@@ -43,7 +43,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
   # argument is a set of non-required options.
   # config.vm.synced_folder "../data", "/vagrant_data"
   # synced folder
-  config.vm.synced_folder "./", "/var/www", id: "vagrant-root", type: "nfs"
+  config.vm.synced_folder "./", "/vagrant", id: "vagrant-root", type: "nfs"
 
   # Provider-specific configuration so you can fine-tune various
   # backing providers for Vagrant. These expose provider-specific options.
@@ -66,7 +66,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Enable provisioning with Bash.
   #
-  config.vm.provision :shell, inline: "cd /vagrant && make timezone base php composer gitconfig xdebug"
+  config.vm.provision :shell, inline: "cd /vagrant && make timezone base php composer gitconfig xdebug sqlite"
 
   config.vm.provider "vmware_fusion" do |v|
     v.vmx["memsize"] = "1024"
