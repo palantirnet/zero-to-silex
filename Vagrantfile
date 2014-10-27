@@ -66,7 +66,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
 
   # Enable provisioning with Bash.
   #
-  config.vm.provision :shell, inline: "cd /vagrant && make timezone base php composer gitconfig xdebug"
+  config.vm.provision :shell, inline: "cd /vagrant && make timezone base php composer gitconfig xdebug sqlite mysql"
 
   config.vm.provider "vmware_fusion" do |v|
     v.vmx["memsize"] = "1024"

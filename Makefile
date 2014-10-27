@@ -58,6 +58,9 @@ xdebug: base
 	service apache2 restart
 
 mysql: base
-	sudo apt-get install -y mysql-server mysql-server-5.5 mysql-client mysql-client-core-5.5 mysql-client-5.5 php5-mysql
+	apt-get install -y mysql-server mysql-server-5.5 mysql-client mysql-client-core-5.5 mysql-client-5.5 php5-mysql
 	mysql -u root -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';"
 	mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'test'@'localhost';"
+
+sqlite: base
+	apt-get install php5-sqlite
