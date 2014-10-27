@@ -7,10 +7,14 @@ update-apt:
 base: update-apt
 	DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
 	apt-get install -y vim curl apache2 wget git-core git-sh
+	git config --global push.default simple
+	git config --global user.name "Larry Garfield"
+	git config --global user.email garfield@palantir.net
 
 apache: base
 	rm /etc/apache2/sites-available/000-default.conf
 	ln -s /var/www/config/apache2-default-site.conf /etc/apache2/sites-available/000-default.conf
+	a2enmod rewrite
 	service apache2 restart
 	[ -f /var/www/html/index.html ] && rm /var/www/html/index.html
 	[ -z "$(ls -A /var/www/html)" ] && rm -r /var/www/html
@@ -54,6 +58,6 @@ xdebug: base
 	service apache2 restart
 
 mysql: base
-	sudo apt-get install -y mysql-server mysql-server-5.5 mysql-client php5-mysql
-	msyql -u root "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';"
-	mysql -u root "GRANT ALL PRIVILEGES ON * . * TO 'test'@'localhost';"
+	sudo apt-get install -y mysql-server mysql-server-5.5 mysql-client mysql-client-core-5.5 mysql-client-5.5 php5-mysql
+	mysql -u root -e "CREATE USER 'test'@'localhost' IDENTIFIED BY 'test';"
+	mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'test'@'localhost';"

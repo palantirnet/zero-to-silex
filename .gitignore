@@ -1,0 +1,9 @@
+/vendor/
+/bin/
+/composer.phar
+.vagrant
+.DS_Store
+
+# IDE files
+.idea
+.tags
