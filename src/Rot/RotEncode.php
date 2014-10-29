@@ -1,6 +1,6 @@
 <?php
 
-namespace Chatter;
+namespace Chatter\Rot;
 
 /**
  * Also known as Rotten Code.
