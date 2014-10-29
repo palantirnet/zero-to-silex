@@ -2,6 +2,7 @@
 
 namespace Chatter;
 
+use Chatter\Rot\RotServiceProvider;
 use Silex\Application as SilexApplication;
 use Silex\Provider\DoctrineServiceProvider;
 
@@ -19,15 +20,13 @@ class Application extends SilexApplication
 
   protected function registerServices(Application $app)
   {
-    $app['rot_encode.count'] = 13;
-
-    $app['rot_encode'] = $app->share(function () use ($app) {
-        return new RotEncode($app['rot_encode.count']);
-      });
   }
 
   protected function registerProviders(Application $app)
   {
+    // Load our Rot encoding service provider bundle-like module thingie.
+    $app->register(new RotServiceProvider());
+
     // Load the installation-specific configuration file. This should never be in Git.
     $app->register(new \Igorw\Silex\ConfigServiceProvider(__DIR__ . "/../config/settings.json"));
 
