@@ -1,7 +1,8 @@
 {
     "require": {
         "silex/silex": "~1.2",
-        "doctrine/dbal": "2.2"
+        "doctrine/dbal": "2.2",
+        "igorw/config-service-provider": "~1.2"
     },
     "autoload": {
        "psr-4": {
