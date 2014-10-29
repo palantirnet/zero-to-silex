@@ -2,6 +2,7 @@
 
 namespace Chatter;
 
+use Chatter\Rot\RotControllerProvider;
 use Chatter\Rot\RotServiceProvider;
 use Silex\Application as SilexApplication;
 use Silex\Provider\DoctrineServiceProvider;
@@ -15,6 +16,7 @@ class Application extends SilexApplication
 
     $this->registerServices($this);
     $this->registerProviders($this);
+    $this->registerRoutes($this);
     $this->createRoutes($this);
   }
 
@@ -41,12 +43,13 @@ class Application extends SilexApplication
       ]);
   }
 
+  protected function registerRoutes(Application $app)
+  {
+    $app->mount('', new RotControllerProvider());
+  }
+
   protected function createRoutes(Application $app)
   {
-    $app->get('/about', function() use ($app) {
-        $s = $app['rot_encode']->rot("This is a super simple messaging service.");
-        return $s;
-      });
 
     $app->get('/reinstall', function() use ($app) {
 
