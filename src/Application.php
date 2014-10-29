@@ -33,10 +33,16 @@ class Application extends SilexApplication
 
   protected function registerProviders(Application $app)
   {
+    // Load the installation-specific configuration file. This should never be in Git.
+    $app->register(new \Igorw\Silex\ConfigServiceProvider(__DIR__ . "/../config/settings.json"));
+
+    // Load environment-specific configuration.
+    $app->register(new \Igorw\Silex\ConfigServiceProvider(__DIR__ . "/../config/{$app['environment']}.json"));
+
     $app->register(new DoctrineServiceProvider(), [
         'db.options' => [
           'driver'   => 'pdo_sqlite',
-          'path'     => __DIR__ . '/../app.db',
+          'path'     => __DIR__ . '/../' . $app['database']['path'],
         ],
       ]);
   }

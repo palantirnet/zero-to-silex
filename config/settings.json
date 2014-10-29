@@ -1,0 +1,7 @@
+{
+    "database": {
+        "path": "app.db"
+    },
+    "rot_encode.count": 26,
+    "environment": "dev"
+}
