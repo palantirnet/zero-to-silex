@@ -4,8 +4,11 @@ namespace Chatter;
 
 use Chatter\Rot\RotControllerProvider;
 use Chatter\Rot\RotServiceProvider;
+use Chatter\Users\UserControllerProvider;
+use Chatter\Users\UserServiceProvider;
 use Silex\Application as SilexApplication;
 use Silex\Provider\DoctrineServiceProvider;
+use Silex\Provider\UrlGeneratorServiceProvider;
 
 class Application extends SilexApplication
 {
@@ -29,6 +32,12 @@ class Application extends SilexApplication
     // Load our Rot encoding service provider bundle-like module thingie.
     $app->register(new RotServiceProvider());
 
+    // Load user services.
+    $app->register(new UserServiceProvider());
+
+    // Load the Generator service. Nothing is there by default, remember?
+    $app->register(new UrlGeneratorServiceProvider());
+
     // Load the installation-specific configuration file. This should never be in Git.
     $app->register(new \Igorw\Silex\ConfigServiceProvider(__DIR__ . "/../config/settings.json"));
 
@@ -45,7 +54,8 @@ class Application extends SilexApplication
 
   protected function registerRoutes(Application $app)
   {
-    $app->mount('', new RotControllerProvider());
+    $app->mount('/', new RotControllerProvider());
+    $app->mount('/', new UserControllerProvider());
   }
 
   protected function createRoutes(Application $app)
