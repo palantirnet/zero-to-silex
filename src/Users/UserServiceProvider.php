@@ -14,9 +14,12 @@ class UserServiceProvider implements \Silex\ServiceProviderInterface
 
     public function register(Application $app)
     {
-
         $app['users.repository'] = $app->share(function () use ($app) {
             return new UserRepository($app['db']);
+        });
+
+        $app['users.controller'] = $app->share(function () use ($app) {
+            return new UserController($app);
         });
     }
 

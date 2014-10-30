@@ -13,6 +13,7 @@ use Chatter\Users\UserControllerProvider;
 use Chatter\Users\UserServiceProvider;
 use Silex\Application as SilexApplication;
 use Silex\Provider\DoctrineServiceProvider;
+use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
 
 class Application extends SilexApplication
@@ -42,6 +43,9 @@ class Application extends SilexApplication
 
     // Load the Generator service. Nothing is there by default, remember?
     $app->register(new UrlGeneratorServiceProvider());
+
+    // Service controllers FTW!
+    $app->register(new ServiceControllerServiceProvider());
 
     // Load the installation-specific configuration file. This should never be in Git.
     $app->register(new \Igorw\Silex\ConfigServiceProvider(__DIR__ . "/../config/settings.json"));
