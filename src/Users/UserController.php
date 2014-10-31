@@ -40,4 +40,15 @@ class UserController
         unset($user['id']);
         return $this->app->json($user);
     }
+
+    public function putUser($user, Request $request)
+    {
+        $newUser = json_decode($request->getContent(), TRUE);
+        $user['username'] = $newUser['username'];
+        $user['age'] = $newUser['age'];
+        $this->app['users.repository']->update($user);
+
+        // Let's return the updated object.
+        return $this->getUser($user);
+    }
 }

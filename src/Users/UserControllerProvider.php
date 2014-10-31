@@ -24,7 +24,13 @@ class UserControllerProvider implements ControllerProviderInterface
       ->bind('users.view')
       ->convert('user', function($username) use ($app) {
           return $app['users.repository']->findByUsername($username);
-      });
+        });
+
+    $controllers->put("/users/{user}", 'users.controller:putUser')
+      ->bind('users.update')
+      ->convert('user', function($username) use ($app) {
+          return $app['users.repository']->findByUsername($username);
+        });
 
     return $controllers;
   }
