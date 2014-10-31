@@ -8,10 +8,14 @@ use Chatter\Rot\RotControllerProvider;
 use Chatter\Rot\RotServiceProvider;
 use Chatter\Users\UserControllerProvider;
 use Chatter\Users\UserServiceProvider;
+use Crell\ApiProblem\ApiProblem;
 use Silex\Application as SilexApplication;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
+use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 class Application extends SilexApplication
 {
@@ -24,6 +28,29 @@ class Application extends SilexApplication
     $this->registerProviders($this);
     $this->registerRoutes($this);
     $this->createRoutes($this);
+    $this->registerErrorListeners($this);
+  }
+
+  protected function registerErrorListeners(Application $app)
+  {
+      $app->error(function(\Exception $e, $code) {
+          $problem = new ApiProblem('Unknown error');
+          $problem->setDetail($e->getMessage());
+          return new JsonResponse($problem->asArray(), $code);
+      });
+
+      $app->error(function(ObjectNotFoundException $e) {
+          $problem = new ApiProblem('Object not found', 'http://httpstatus.es/404');
+          $problem->setDetail($e->getMessage());
+          return new JsonResponse($problem->asArray(), Response::HTTP_NOT_FOUND);
+       }, 10);
+
+      $app->error(function(NotFoundHttpException $e, $code) {
+          $problem = new ApiProblem('Resource not found', 'http://httpstatus.es/404');
+          $problem->setDetail($e->getMessage());
+          return new JsonResponse($problem->asArray(), $code);
+       }, 10);
+
   }
 
   protected function registerServices(Application $app)
