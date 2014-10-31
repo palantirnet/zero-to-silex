@@ -7,10 +7,10 @@
 
 namespace Chatter\Users;
 
+use Chatter\RepositoryInterface;
 use Doctrine\DBAL\Connection;
 
-class UserRepository
-{
+class UserRepository implements RepositoryInterface {
     /**
      * @var \Doctrine\DBAL\Connection
      */
