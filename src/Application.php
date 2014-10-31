@@ -7,6 +7,8 @@
 
 namespace Chatter;
 
+use Chatter\Messages\MessageControllerProvider;
+use Chatter\Messages\MessageServiceProvider;
 use Chatter\Rot\RotControllerProvider;
 use Chatter\Rot\RotServiceProvider;
 use Chatter\Users\UserControllerProvider;
@@ -41,6 +43,9 @@ class Application extends SilexApplication
     // Load user services.
     $app->register(new UserServiceProvider());
 
+    // Load message services.
+    $app->register(new MessageServiceProvider());
+
     // Load the Generator service. Nothing is there by default, remember?
     $app->register(new UrlGeneratorServiceProvider());
 
@@ -65,6 +70,7 @@ class Application extends SilexApplication
   {
     $app->mount('/', new RotControllerProvider());
     $app->mount('/', new UserControllerProvider());
+    $app->mount('/', new MessageControllerProvider());
   }
 
   protected function createRoutes(Application $app)
