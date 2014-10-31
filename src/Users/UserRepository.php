@@ -60,7 +60,7 @@ class UserRepository
             }
         }
         catch (\PDOException $e) {
-            throw new \InvalidArgumentException("User already exists", $e);
+            throw new \InvalidArgumentException($e->getMessage());
         }
     }
 }
