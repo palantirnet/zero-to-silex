@@ -7,6 +7,7 @@
 
 namespace Chatter\Users;
 
+use Chatter\ObjectNotFoundException;
 use Chatter\RepositoryInterface;
 use Doctrine\DBAL\Connection;
 
@@ -26,7 +27,7 @@ class UserRepository implements RepositoryInterface
     {
         $record = $this->conn->fetchAssoc("SELECT id, username, age FROM users WHERE id = :id", [':id' => $id]);
         if (!$record) {
-            throw new \InvalidArgumentException("User not found for ID: {$id}");
+            throw new ObjectNotFoundException("User not found for ID: {$id}");
         }
 
       return $record;
@@ -36,7 +37,7 @@ class UserRepository implements RepositoryInterface
     {
         $record = $this->conn->fetchAssoc("SELECT id, username, age FROM users WHERE username = :username", [':username' => $username]);
         if (!$record) {
-          throw new \InvalidArgumentException("User not found for name: {$username}");
+          throw new ObjectNotFoundException("User not found for name: {$username}");
         }
 
         return $record;

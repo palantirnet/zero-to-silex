@@ -2,7 +2,8 @@
     "require": {
         "silex/silex": "~1.2",
         "doctrine/dbal": "2.2",
-        "igorw/config-service-provider": "~1.2"
+        "igorw/config-service-provider": "~1.2",
+        "crell/api-problem": "~1.7"
     },
     "autoload": {
        "psr-4": {

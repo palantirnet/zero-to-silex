@@ -9,6 +9,7 @@ namespace Chatter\Messages;
 
 use Chatter\RepositoryInterface;
 use Doctrine\DBAL\Connection;
+use Chatter\ObjectNotFoundException;
 
 class MessageRepository implements RepositoryInterface
 {
@@ -26,7 +27,7 @@ class MessageRepository implements RepositoryInterface
   {
       $record = $this->conn->fetchAssoc("SELECT id, message, author, parent FROM messages WHERE id = :id", [':id' => $id]);
       if (!$record) {
-        throw new \InvalidArgumentException("Message not found for ID: {$id}");
+        throw new ObjectNotFoundException("Message not found for ID: {$id}");
       }
 
       return $record;
