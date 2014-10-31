@@ -23,7 +23,7 @@ class UserRepository
 
     public function find($id)
     {
-        $record = $this->conn->fetchAssoc("SELECT id, username FROM users WHERE id = :id", [':id' => $id]);
+        $record = $this->conn->fetchAssoc("SELECT id, username, age FROM users WHERE id = :id", [':id' => $id]);
         if (!$record) {
             throw new \InvalidArgumentException("User not found for ID: {$id}");
         }
@@ -32,18 +32,24 @@ class UserRepository
 
     public function findByUsername($username)
     {
-        $record = $this->conn->fetchAssoc("SELECT id, username FROM users WHERE username = :username", [':username' => $username]);
+        $record = $this->conn->fetchAssoc("SELECT id, username, age FROM users WHERE username = :username", [':username' => $username]);
         if (!$record) {
           throw new \InvalidArgumentException("User not found for name: {$username}");
         }
         return $record;
     }
 
+    public function update($user)
+    {
+        $this->conn->update('users', ['username' => $user['username'], 'age' => $user['age']], ['id' => $user['id']]);
+    }
+
     public function create($user)
     {
         try {
             $rows = $this->conn->insert('users', [
-                'username' => $user['username']
+                'username' => $user['username'],
+                'age' => $user['age'],
             ]);
 
             if ($rows) {

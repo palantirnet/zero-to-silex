@@ -78,6 +78,7 @@ class Application extends SilexApplication
         $table = $schema->createTable('users');
         $table->addColumn("id", "integer", ["unsigned" => true]);
         $table->addColumn("username", "string", ["length" => 32]);
+        $table->addColumn("age", "integer", ["unsigned" => true]);
         $table->setPrimaryKey(["id"]);
         $table->addUniqueIndex(["username"]);
         $schema->createSequence("users_seq");
