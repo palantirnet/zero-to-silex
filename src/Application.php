@@ -86,9 +86,9 @@ class Application extends SilexApplication
 
         $table = $schema->createTable('messages');
         $table->addColumn("id", "integer", ["unsigned" => true]);
-        $table->addColumn("username", "string", ["length" => 32]);
-        $table->addColumn("message", "string", ["length" => 256]);
         $table->addColumn("author", "integer", ["unsigned" => true]);
+        $table->addColumn("message", "string", ["length" => 256]);
+        $table->addColumn("parent", "integer", ["unsigned" => true]);
         $table->setPrimaryKey(["id"]);
         $sm->dropAndCreateTable($table);
 
