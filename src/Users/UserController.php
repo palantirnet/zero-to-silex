@@ -10,6 +10,7 @@ namespace Chatter\Users;
 
 use Chatter\Application;
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
 
 class UserController
 {
@@ -32,7 +33,7 @@ class UserController
           ['user' => $user['username']]
         );
 
-        return $this->app->redirect($url);
+        return $this->app->redirect($url, Response::HTTP_CREATED);
     }
 
     public function getUser($user)
