@@ -6,14 +6,15 @@ update-apt:
 
 base: update-apt
 	DEBIAN_FRONTEND=noninteractive apt-get -y -o Dpkg::Options::="--force-confdef" -o Dpkg::Options::="--force-confold" upgrade
-	apt-get install -y vim curl apache2 wget git-core git-sh
+	apt-get install -y vim curl wget git-core git-sh
 	git config --global push.default simple
 	git config --global user.name "Larry Garfield"
 	git config --global user.email garfield@palantir.net
 
 apache: base
+	apt-get install -y apache2
 	rm /etc/apache2/sites-available/000-default.conf
-	ln -s /var/www/config/apache2-default-site.conf /etc/apache2/sites-available/000-default.conf
+	ln -s /vagrant/config/apache2-default-site.conf /etc/apache2/sites-available/000-default.conf
 	a2enmod rewrite
 	service apache2 restart
 	[ -f /var/www/html/index.html ] && rm /var/www/html/index.html
@@ -63,4 +64,4 @@ mysql: base
 	mysql -u root -e "GRANT ALL PRIVILEGES ON * . * TO 'test'@'localhost';"
 
 sqlite: base
-	apt-get install php5-sqlite
+	apt-get install -y php5-sqlite sqlite
