@@ -3,7 +3,8 @@
         "silex/silex": "~1.2",
         "doctrine/dbal": "2.2",
         "igorw/config-service-provider": "~1.2",
-        "crell/api-problem": "~1.7"
+        "crell/api-problem": "~1.7",
+        "nocarrier/hal": "~0.9"
     },
     "autoload": {
        "psr-4": {

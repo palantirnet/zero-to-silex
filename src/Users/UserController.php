@@ -9,6 +9,7 @@ namespace Chatter\Users;
 
 
 use Chatter\Application;
+use Nocarrier\Hal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -39,7 +40,14 @@ class UserController
     public function getUser($user)
     {
         unset($user['id']);
-        return $this->app->json($user);
+
+        $self = $url = $this->app['url_generator']->generate(
+          'users.view',
+          ['user' => $user['username']]
+        );
+        $hal = new Hal($self, $user);
+
+        return $hal;
     }
 
     public function putUser($user, Request $request)

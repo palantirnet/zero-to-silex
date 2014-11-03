@@ -14,27 +14,84 @@ use Chatter\Rot\RotServiceProvider;
 use Chatter\Users\UserControllerProvider;
 use Chatter\Users\UserServiceProvider;
 use Crell\ApiProblem\ApiProblem;
+use Nocarrier\Hal;
 use Silex\Application as SilexApplication;
 use Silex\Provider\DoctrineServiceProvider;
 use Silex\Provider\ServiceControllerServiceProvider;
 use Silex\Provider\UrlGeneratorServiceProvider;
 use Symfony\Component\HttpFoundation\JsonResponse;
+use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Event\GetResponseForControllerResultEvent;
+use Symfony\Component\HttpKernel\Exception\NotAcceptableHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 class Application extends SilexApplication
 {
 
-  public function __construct()
-  {
-    parent::__construct();
+    public function __construct()
+    {
+        parent::__construct();
 
-    $this->registerServices($this);
-    $this->registerProviders($this);
-    $this->registerRoutes($this);
-    $this->createRoutes($this);
-    $this->registerErrorListeners($this);
-  }
+        $this->registerServices($this);
+        $this->registerProviders($this);
+        $this->registerRoutes($this);
+        $this->createRoutes($this);
+        $this->registerErrorListeners($this);
+        $this->registerBeforeListeners($this);
+        $this->registerViewListeners($this);
+    }
+
+    protected function registerBeforeListeners(Application $app)
+    {
+        // Quick'n'dirty content negotiation.
+        $app->before(function (Request $request, Application $app) {
+
+            $request->setFormat('hal_json', 'application/hal+json');
+
+            foreach ($request->getAcceptableContentTypes() as $mime_type) {
+                if ($format = $request->getFormat($mime_type)) {
+                    $request->setRequestFormat($format);
+                    return;
+                }
+            }
+            // Application-specific default.
+            $request->setRequestFormat('json');
+        });
+    }
+
+    protected function registerViewListeners(Application $app)
+    {
+        // Add a listener to convert a HAL object to a response.
+        $app->on(KernelEvents::VIEW, function(GetResponseForControllerResultEvent $event) use ($app) {
+            $result = $event->getControllerResult();
+
+            //var_dump($event->getRequest()->attributes->all());
+
+            if ($result instanceof Hal) {
+                if (in_array($event->getRequest()->getRequestFormat(), ['json', 'hal_json'])) {
+                    $response = new HalJsonResponse($result, Response::HTTP_OK);
+                    $response->setPretty($app['debug']);
+                }
+                else if ($app['debug']) {
+                    // For debugging, default to returning JSON.
+                    // Return application/json in dev mode because
+                    // application/hal+json, while more precisely accurate,
+                    // won't be rendered by most browsers.
+                    $response = new Response($result->asJson(true),
+                      Response::HTTP_OK,
+                      ['Content-Type' => 'application/json']);
+                }
+                else {
+                    // In production, require a proper accept header.
+                    throw new NotAcceptableHttpException("Only media types application/hal+json and application/hal+xml are supported.");
+                }
+
+                $event->setResponse($response);
+            }
+        });
+    }
 
   protected function registerErrorListeners(Application $app)
   {
@@ -54,7 +111,13 @@ class Application extends SilexApplication
           $problem = new ApiProblem('Resource not found', 'http://httpstatus.es/404');
           $problem->setDetail($e->getMessage());
           return new JsonResponse($problem->asArray(), $code);
-       }, 10);
+      }, 10);
+
+      $app->error(function(NotAcceptableHttpException $e, $code) {
+          $problem = new ApiProblem('No acceptable format available', 'http://httpstatus.es/406');
+          $problem->setDetail($e->getMessage());
+          return new JsonResponse($problem->asArray(), $code);
+      }, 10);
 
   }
 
