@@ -41,6 +41,38 @@ class Application extends SilexApplication
         $this->registerErrorListeners($this);
         $this->registerBeforeListeners($this);
         $this->registerViewListeners($this);
+        $this->registerAfterListeners($this);
+    }
+
+    protected function registerAfterListeners(Application $app)
+    {
+        // Add caching headers as appropriate, including sending an HTTP 304
+        // Not Modified if appropriate.  Note: This does mean that we generate
+        // the whole response before deciding we don't need to send it, but
+        // since there is dependent data in the response (_embedded resources)
+        // we can't just use the primary resource's hash for the ETag.
+        $app->after(function (Request $request, Response $response) use ($app) {
+            // In debug mode, disable all caching.
+            if ($app['debug']) {
+                return;
+            }
+
+            $cache_lifetime = $app['cache.lifetime'] ?: 0;
+
+            $response
+              ->setTtl($cache_lifetime)
+              ->setClientTtl($cache_lifetime);
+
+            $expires = new \DateTime("now +{$cache_lifetime} seconds", new \DateTimeZone('UTC'));
+            $response->setExpires($expires);
+
+            $etag = sha1($response->getContent());
+            $response->setEtag($etag);
+
+            if ($response->isNotModified($request)) {
+                $response->setNotModified();
+            }
+        }, 0);
     }
 
     protected function registerBeforeListeners(Application $app)
