@@ -8,6 +8,7 @@
 namespace Chatter\Messages;
 
 use Chatter\Application;
+use Nocarrier\Hal;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 
@@ -38,11 +39,35 @@ class MessageController
 
     public function getMessage($message)
     {
-        unset($message['id']);
+        // Make the HAL object.
+        $self = $url = $this->app['url_generator']->generate(
+          'messages.view',
+          ['message' => $message['id']]
+        );
+        $hal = new Hal($self);
 
-        $message['author'] = $this->app['users.repository']->findByUsername($message['author'])['id'];
+        // Add a link to the author.
+        $author_id = $this->app['users.repository']->findByUsername($message['author'])['id'];
+        $author = $url = $this->app['url_generator']->generate(
+          'users.view',
+          ['user' => $author_id]
+        );
+        $hal->addLink('author', $author);
 
-        return $this->app->json($message);
+        // Add a link to the parent, if any.
+        if ($message['parent']) {
+            $up = $url = $this->app['url_generator']->generate(
+              'messages.view',
+              ['message' => $message['parent']]
+            );
+            $hal->addLink('up', $up);
+        }
+
+        // Strip the now-irrelevant data from the object and send it.
+        unset($message['id'], $message['parent'], $message['author']);
+        $hal->setData($message);
+
+        return $hal;
     }
 
     public function reply($message, Request $request)
