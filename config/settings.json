@@ -2,6 +2,7 @@
     "database": {
         "path": "app.db"
     },
+    "cache.lifetime": 300,
     "rot_encode.count": 26,
     "environment": "dev"
 }
