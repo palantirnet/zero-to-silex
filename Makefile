@@ -65,3 +65,4 @@ mysql: base
 
 sqlite: base
 	apt-get install -y php5-sqlite sqlite
+	service apache2 restart
